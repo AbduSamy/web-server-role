@@ -1,0 +1,12 @@
+<VirtualHost *:{{ vhost_port }}>
+    ServerAdmin		webmaster@{{ ansible_hostname }}.example.com
+    DocumentRoot	/vhosts/{{ ansible_hostname }}.example.com
+    ServerName		{{ ansible_hostname }}.example.com
+    ServerAlias		{{ ansible_hostname }}
+    ErrorLog		/var/log/httpd/{{ ansible_hostname }}.example.com-error_log
+    CustomLog		"/var/log/httpd/{{ ansible_hostname }}.example.com-access_log" combine
+       <Directory /vhosts/{{ ansible_hostname }}.example.com/>
+           Require all granted
+       </Directory>
+</VirtualHost>
+
