@@ -88,13 +88,6 @@
         state           : touch
       tags              : deploy
                 
-    - name              : Add home page contents
-      lineinfile        :
-        path            : "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
-        state           : present
-        line            : Hello, this is my ansible webpage for host {{ ansible_hostname }}
-      tags              : 
-                
     - name              : Add home page contents by template 
       template          :
         src             : vhost-index-template.j2
