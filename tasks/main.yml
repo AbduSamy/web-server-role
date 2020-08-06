@@ -35,19 +35,29 @@
       tags              :
         - deploy
                 
-    - name              : Make apache vhost listen to {{ vhost_port }}
+    - name              : Configure apache vhost to listen to port {{ vhost_port }}
       lineinfile        : 
         path            : /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
-        regexp          : "^Listen 80"
-        line            : "Listen {{ vhost_port }}"
+        regexp          : ^Listen 80
+        line            : Listen {{ vhost_port }}
         insertbefore    : BOF
-        backrefs        : no
         state           : present
       notify            : restart_httpd
       tags              :
         - deploy
-      when              : "{{ vhost_port }} != 80"
-                
+      when              : vhost_port|int != 80
+      
+    - name              : Ensure the apache is listening to port 80
+      lineinfile        :
+        path            : /etc/httpd/conf/httpd.conf
+        line            : Listen {{ vhost_port }}
+        insertafter     : ^#Listen
+        state           : present
+      notify            : restart_httpd
+      tags              :
+        - deploy
+      when              : vhost_port|int == 80
+
     - name              : Start/Enable service 
       service           :
         name            : httpd
@@ -83,9 +93,9 @@
         path            : "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
         state           : present
         line            : Hello, this is my ansible webpage for host {{ ansible_hostname }}
-      tags              : deploy
+      tags              : 
                 
-    - name              : Home Page by template
+    - name              : Add home page contents by template 
       template          :
         src             : vhost-index-template.j2
         dest            : "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"

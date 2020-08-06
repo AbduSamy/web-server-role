@@ -11,12 +11,12 @@ No specific requirements desired.
 Role Variables
 --------------
 
-# Define virtual host port
-vhost_port      : 876
+ Define virtual host port
+  vhost_port      : 876
 
-# Define virtual host Root Directory
-vhost_dir	: /vhosts      
-## without trailing slash
+ Define virtual host Root Directory
+  vhost_dir	: /vhosts      
+    without trailing slash
 
 
 Dependencies
@@ -24,24 +24,39 @@ Dependencies
 
 Nothing rquired.
 
-Example Playbook
+
+Example Playbook to run this role
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Use the following play to run this role
 
 
----
- - name                 : Run web roles (Deploy httpd service)
+ - name                 : Run web_server_role (Deploy httpd service)
    hosts                : web
    tasks                :
     - include_role      :
        name             : roles/abdusamy.web_server_role
       tags              : [deploy,destroy,backup,check]
-...
 
-Uss this command to run the role:
-ansible-playbook run-roles.yml --tags deploy
+Save the above play in "run-role.yml" file
 
+Commands Guide
+--------------
+
+Run this command to deploy the web server:
+ansible-playbook run-role.yml --tags deploy
+
+Run this command to check your installed web server:
+ansible-playbook run-role.yml --tags check
+
+Run this command to to rollback your web server:
+ansible-playbook run-role.yml --tags destroy
+
+Run this command to backup your web server configuration and home page:
+ansible-playbook run-role.yml --tags backup
+
+
+---
 
 License
 -------
