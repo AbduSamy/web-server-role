@@ -3,8 +3,8 @@
 
     - name: display vhost_name variable
       debug:
-        msg: Deploying virtual host with FQDN {{ vhost_name }}.{{ vhost_domain }} on directory {{ vhost_dir }} and port {{ vhost_port }} .. 
-      tags: deployy
+        msg: Deploying virtual host with FQDN {{ vhost_name }}.{{ vhost_domain }} on directory {{ vhost_dir }} and port {{ vhost_port }} ..
+      tags: deploy
     - name: Install httpd package
       yum:
         name: httpd
