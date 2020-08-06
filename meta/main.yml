@@ -43,7 +43,6 @@ galaxy_info:
   platforms:
    - name: Redhat
      versions:
-     - all
      - 7
      - 8
 
