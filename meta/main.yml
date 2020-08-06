@@ -1,7 +1,7 @@
 galaxy_info:
-  role_name: web-server-deploy
+  role_name: deploy-web-server
   author: Abdul Rahman Mohamed
-  description: Deploy http service
+  description: Deploy http virtual hosts using customized configuration
   company: Abdul, Inc.
 
   # If the issue tracker for your role is not on github, uncomment the

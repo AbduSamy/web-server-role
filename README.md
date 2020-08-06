@@ -19,6 +19,15 @@ Role Variables
     without trailing slash
 
 
+Default Variables
+-----------------
+
+Virtual host name:
+ vhost_name = {{ ansible_hostname }}
+
+Domain name:
+ vhost_domain = {{ ansible_domain }}
+
 Dependencies
 ------------
 

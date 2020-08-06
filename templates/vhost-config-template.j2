@@ -1,11 +1,11 @@
 <VirtualHost *:{{ vhost_port }}>
-    ServerAdmin		webmaster@{{ ansible_fqdn }}
-    DocumentRoot	{{ vhost_dir }}/{{ ansible_fqdn }}
-    ServerName		{{ ansible_fqdn }}
-    ServerAlias		{{ ansible_hostname }}
-    ErrorLog		/var/log/httpd/{{ ansible_fqdn }}-error_log
-    CustomLog		"/var/log/httpd/{{ ansible_fqdn }}-access_log" combine
-       <Directory {{ vhost_dir }}/{{ ansible_fqdn }}/>
+    ServerAdmin		webmaster@{{ vhost_name }}.{{ vhost_domain }}
+    DocumentRoot	{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/
+    ServerName		{{ vhost_name }}.{{ vhost_domain }}
+    ServerAlias		{{ vhost_name }}
+    ErrorLog		/var/log/httpd/{{ vhost_name }}.{{ vhost_domain }}-error_log
+    CustomLog		/var/log/httpd/{{ vhost_name }}.{{ vhost_domain }}-access_log combine
+       <Directory {{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/>
            Require all granted
        </Directory>
 </VirtualHost>

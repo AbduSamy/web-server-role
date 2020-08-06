@@ -1,6 +1,10 @@
 ---
     # tasks file for web-server
 
+    - name: display vhost_name variable
+      debug:
+        msg : Deploying virtual host with FQDN {{ vhost_name }}.{{ vhost_domain }} on directory {{ vhost_dir }} and port {{ vhost_port }} .. 
+      tags: deployy
     - name: Install httpd package
       yum:
         name: httpd
@@ -26,13 +30,13 @@
     - name: Configure virtual host
       template:
         src: vhost-config-template.j2
-        dest: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        dest: /etc/httpd/conf.d/{{ vhost_name }}-vhost.conf
       notify: restart_httpd
       tags:
         - deploy
     - name: Configure apache vhost to listen to port {{ vhost_port }}
       lineinfile:
-        path: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        path: /etc/httpd/conf.d/{{ vhost_name }}-vhost.conf
         regexp: ^Listen 80
         line: Listen {{ vhost_port }}
         insertbefore: BOF
@@ -59,7 +63,7 @@
         - deploy
     - name: Create virtual Host Document Root {{ vhost_dir }}
       file:
-        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/"
+        path: "{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/"
         state: directory
       tags: deploy
     - name: Add SElinux context label to the Document Root {{ vhost_dir }}
@@ -71,28 +75,28 @@
     - name: Apply the new SELinux context to Document Root {{ vhost_dir }}
       command:
         cmd: restorecon -Rv {{ vhost_dir }}/
-        creates: "{{ vhost_dir }}/{{ ansible_fqdn }}/"
+        removes: "{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/"
       tags: deploy
     - name: Place Home Page
       file:
-        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        path: "{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/index.html"
         state: touch
       tags: deploy
     - name: Add home page contents by template
       template:
         src: vhost-index-template.j2
-        dest: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        dest: "{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/index.html"
       tags: deploy
     - name: backup configuration files
       fetch:
-        src: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        src: /etc/httpd/conf.d/{{ vhost_name }}-vhost.conf
         dest: /backup/fetched/
         validate_checksum: yes
       ignore_errors: yes
       tags: [deploy, backup, destroy]
     - name: backup home pages
       fetch:
-        src: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        src: "{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/index.html"
         dest: /backup/fetched/
         validate_checksum: yes
       ignore_errors: yes
@@ -134,7 +138,7 @@
         - vhost_port|int != 9000
     - name: Stop apache to listen to {{ vhost_port }}
       lineinfile:
-        path: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        path: /etc/httpd/conf.d/{{ vhost_name }}-vhost.conf
         line: "Listen {{ vhost_port }}"
         state: absent
       ignore_errors: yes
@@ -142,7 +146,7 @@
         - destroy
     - name: Remove vhost configuration file
       file:
-        path: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        path: /etc/httpd/conf.d/{{ vhost_name }}-vhost.conf
         state: absent
       ignore_errors: yes
       tags: destroy
@@ -155,14 +159,14 @@
         - destroy
     - name: Remove Home page contents
       lineinfile:
-        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        path: "{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/index.html"
         state: absent
         regexp: "Hello"
       ignore_errors: yes
       tags: destroy
     - name: Remove Home Page
       file:
-        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        path: "{{ vhost_dir }}/{{ vhost_name }}.{{ vhost_domain }}/index.html"
         state: absent
       ignore_errors: yes
       tags: destroy
@@ -183,7 +187,7 @@
       tags: destroy
     - name: Run verification script
       script:
-        cmd: verification_script.sh {{ ansible_hostname }} {{ vhost_port }} {{ vhost_dir }}
+        cmd: verification_script.sh {{ vhost_name }} {{ vhost_port }} {{ vhost_dir }}
       ignore_errors: yes
       register: check_out
       tags:
