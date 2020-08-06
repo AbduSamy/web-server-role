@@ -1,5 +1,5 @@
 ---
 # defaults file for web-server
 
-hostname : {{ ansible_hostname }}
-domain   : {{ ansible_domain }}
+hostname: {{ ansible_hostname }}
+domain: {{ ansible_domain }}

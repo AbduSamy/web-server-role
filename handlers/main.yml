@@ -1,10 +1,9 @@
 ---
 # handlers file for web-server
-#
-#  handlers             :
-    - name              : restart_httpd
-      service           :
-        name            : httpd
-        state           : restarted
-        enabled         : yes
+
+    - name:             restart_httpd
+      service:
+        name:           httpd
+        state:          restarted
+        enabled:        yes
 
