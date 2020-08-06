@@ -1,129 +1,129 @@
 ---
-# tasks file for web-server
+    # tasks file for web-server
 
-    - name:			 Install httpd package
-      yum:			
-        name:			 httpd
-        state:			 installed
-      tags:			
+    - name: Install httpd package
+      yum:
+        name: httpd
+        state: installed
+      tags:
         - deploy
-    - name:			 Open port {{ vhost_port }} on Firewall
-      firewalld:			
-        port:			 "{{ vhost_port }}/tcp"
-        permanent:		 yes
-        immediate:		 yes
-        state:			 enabled
-      tags:			
-         - deploy
-    - name:			 Configure Selinux to allow Apache to listen on tcp port {{ vhost_port }}
-      seport:			
-        ports:			 "{{ vhost_port }}"
-        proto:			 tcp
-        setype:			 http_port_t
-        state:			 present
-      tags:			
+    - name: Open port {{ vhost_port }} on Firewall
+      firewalld:
+        port: "{{ vhost_port }}/tcp"
+        permanent: yes
+        immediate: yes
+        state: enabled
+      tags:
         - deploy
-    - name:			 Configure virtual host
-      template:			
-        src:			 vhost-config-template.j2
-        dest:			 /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
-      notify:			 restart_httpd
-      tags:			
+    - name: Configure Selinux to allow Apache to listen on tcp port {{ vhost_port }}
+      seport:
+        ports: "{{ vhost_port }}"
+        proto: tcp
+        setype: http_port_t
+        state: present
+      tags:
         - deploy
-    - name:			 Configure apache vhost to listen to port {{ vhost_port }}
-      lineinfile:			
-        path:			 /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
-        regexp:			 ^Listen 80
-        line:			 Listen {{ vhost_port }}
-        insertbefore:		 BOF
-        state:			 present
-      notify:			 restart_httpd
-      tags:			
+    - name: Configure virtual host
+      template:
+        src: vhost-config-template.j2
+        dest: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+      notify: restart_httpd
+      tags:
         - deploy
-      when:			 vhost_port|int != 80
-    - name:			 Ensure the apache is listening to port 80
-      lineinfile:			
-        path:			 /etc/httpd/conf/httpd.conf
-        line:			 Listen {{ vhost_port }}
-        insertafter:		 ^#Listen
-        state:			 present
-      notify:			 restart_httpd
-      tags:			
+    - name: Configure apache vhost to listen to port {{ vhost_port }}
+      lineinfile:
+        path: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        regexp: ^Listen 80
+        line: Listen {{ vhost_port }}
+        insertbefore: BOF
+        state: present
+      notify: restart_httpd
+      tags:
         - deploy
-      when:			 vhost_port|int == 80
-    - name:			 Start/Enable service
-      service:			
-        name:			 httpd
-        enabled:		 yes
-      tags:			
+      when: vhost_port|int != 80
+    - name: Ensure the apache is listening to port 80
+      lineinfile:
+        path: /etc/httpd/conf/httpd.conf
+        line: Listen {{ vhost_port }}
+        insertafter: ^#Listen
+        state: present
+      notify: restart_httpd
+      tags:
         - deploy
-    - name:			 Create virtual Host Document Root {{ vhost_dir }}
-      file:			
-        path:			 "{{ vhost_dir }}/{{ ansible_fqdn }}/"
-        state:			 directory
-      tags:			 deploy
-    - name:			 Add SElinux context label to the Document Root {{ vhost_dir }}
-      sefcontext:			
-        target:			 '{{ vhost_dir }}(/.*)?'
-        setype:			 httpd_sys_content_t
-        state:			 present
-      tags:			 deploy
-    - name:			 Apply the new SELinux context to Document Root {{ vhost_dir }}
-      command:			
-        cmd:			 restorecon -Rv {{ vhost_dir }}/
-        creates:		 "{{ vhost_dir }}/{{ ansible_fqdn }}/"
-      tags:			 deploy
-    - name:			 Place Home Page
-      file:			
-        path:			 "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
-        state:			 touch
-      tags:			 deploy
-    - name:			 Add home page contents by template
-      template:			
-        src:			 vhost-index-template.j2
-        dest:			 "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
-      tags:			 deploy
-    - name:			 backup configuration files
-      fetch:			
-        src:			 /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
-        dest:			 /backup/fetched/
-        validate_checksum:	 yes
-      ignore_errors:		 yes
-      tags:			 [deploy,backup,destroy]
-    - name:			 backup home pages
-      fetch:			
-        src:			 "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
-        dest:			 /backup/fetched/
-        validate_checksum:	 yes
-      ignore_errors:		 yes
-      tags:			 [deploy,backup,destroy]
-    - name:			 Close Firewall Port
-      firewalld:			
-        port:			 "{{ vhost_port }}/tcp"
-        permanent:		 yes
-        immediate:		 yes
-        state:			 disabled
-      ignore_errors:		 yes
-      tags:			
-         - destroy
-    - name:			 Stop/Disable service
-      service:			
-        name:			 httpd
-        state:			 stopped
-        enabled:		 no
-      ignore_errors:		 yes
-      tags:			
+      when: vhost_port|int == 80
+    - name: Start/Enable service
+      service:
+        name: httpd
+        enabled: yes
+      tags:
+        - deploy
+    - name: Create virtual Host Document Root {{ vhost_dir }}
+      file:
+        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/"
+        state: directory
+      tags: deploy
+    - name: Add SElinux context label to the Document Root {{ vhost_dir }}
+      sefcontext:
+        target: '{{ vhost_dir }}(/.*)?'
+        setype: httpd_sys_content_t
+        state: present
+      tags: deploy
+    - name: Apply the new SELinux context to Document Root {{ vhost_dir }}
+      command:
+        cmd: restorecon -Rv {{ vhost_dir }}/
+        creates: "{{ vhost_dir }}/{{ ansible_fqdn }}/"
+      tags: deploy
+    - name: Place Home Page
+      file:
+        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        state: touch
+      tags: deploy
+    - name: Add home page contents by template
+      template:
+        src: vhost-index-template.j2
+        dest: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+      tags: deploy
+    - name: backup configuration files
+      fetch:
+        src: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        dest: /backup/fetched/
+        validate_checksum: yes
+      ignore_errors: yes
+      tags: [deploy, backup, destroy]
+    - name: backup home pages
+      fetch:
+        src: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        dest: /backup/fetched/
+        validate_checksum: yes
+      ignore_errors: yes
+      tags: [deploy, backup, destroy]
+    - name: Close Firewall Port
+      firewalld:
+        port: "{{ vhost_port }}/tcp"
+        permanent: yes
+        immediate: yes
+        state: disabled
+      ignore_errors: yes
+      tags:
         - destroy
-    - name:			 Remove port {{ vhost_port }} from Selinux policy
-      seport:			
-        ports:			 "{{ vhost_port }}"
-        proto:			 tcp
-        setype:			 http_port_t
-        state:			 absent
-      ignore_errors:		 yes
-      tags:			
+    - name: Stop/Disable service
+      service:
+        name: httpd
+        state: stopped
+        enabled: no
+      ignore_errors: yes
+      tags:
         - destroy
-      when:			
+    - name: Remove port {{ vhost_port }} from Selinux policy
+      seport:
+        ports: "{{ vhost_port }}"
+        proto: tcp
+        setype: http_port_t
+        state: absent
+      ignore_errors: yes
+      tags:
+        - destroy
+      when:
         - vhost_port|int != 80
         - vhost_port|int != 81
         - vhost_port|int != 443
@@ -132,68 +132,68 @@
         - vhost_port|int != 8009
         - vhost_port|int != 8443
         - vhost_port|int != 9000
-    - name:			 Stop apache to listen to {{ vhost_port }}
-      lineinfile:			
-        path:			 /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
-        line:			 "Listen {{ vhost_port }}"
-        state:			 absent
-      ignore_errors:		 yes
-      tags:			
+    - name: Stop apache to listen to {{ vhost_port }}
+      lineinfile:
+        path: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        line: "Listen {{ vhost_port }}"
+        state: absent
+      ignore_errors: yes
+      tags:
         - destroy
-    - name:			 Remove vhost configuration file
-      file:			
-        path:			 /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
-        state:			 absent
-      ignore_errors:		 yes
-      tags:			 destroy
-    - name:			 Remove httpd package
-      yum:			
-        name:			 httpd
-        state:			 absent
-      ignore_errors:		 yes
-      tags:			
+    - name: Remove vhost configuration file
+      file:
+        path: /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf
+        state: absent
+      ignore_errors: yes
+      tags: destroy
+    - name: Remove httpd package
+      yum:
+        name: httpd
+        state: absent
+      ignore_errors: yes
+      tags:
         - destroy
-    - name:			 Remove Home page contents
-      lineinfile:			
-        path:			 "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
-        state:			 absent
-        regexp:			 "Hello"
-      ignore_errors:		 yes
-      tags:			 destroy
-    - name:			 Remove Home Page
-      file:			
-        path:			 "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
-        state:			 absent
-      ignore_errors:		 yes
-      tags:			 destroy
-    - name:			 Remove Document Root http SE context label
-      sefcontext:			
-        target:			 '{{ vhost_dir }}(/.*)?'
-        setype:			 httpd_sys_content_t
-        state:			 absent
-      tags:			 destroy
-#    - name:			 Restore default SELinux file context
-#      command:			 restorecon -Rv {{ vhost_dir }}/
-#      tags:			 destroyyy
-    - name:			 Remove Document Root
-      file:			
-        path:			 "{{ vhost_dir }}/"
-        state:			 absent
-      ignore_errors:		 yes
-      tags:			 destroy
-    - name:			 Run verification script
-      script:			
-        cmd:			 verification_script.sh {{ ansible_hostname }} {{ vhost_port }} {{ vhost_dir }}
-      ignore_errors:		 yes
-      register:			 check_out
-      tags:			
+    - name: Remove Home page contents
+      lineinfile:
+        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        state: absent
+        regexp: "Hello"
+      ignore_errors: yes
+      tags: destroy
+    - name: Remove Home Page
+      file:
+        path: "{{ vhost_dir }}/{{ ansible_fqdn }}/index.html"
+        state: absent
+      ignore_errors: yes
+      tags: destroy
+    - name: Remove Document Root http SE context label
+      sefcontext:
+        target: '{{ vhost_dir }}(/.*)?'
+        setype: httpd_sys_content_t
+        state: absent
+      tags: destroy
+#   - name: Restore default SELinux file context
+#       command: restorecon -Rv {{ vhost_dir }}/
+#       tags: destroyyy
+    - name: Remove Document Root
+      file:
+        path: "{{ vhost_dir }}/"
+        state: absent
+      ignore_errors: yes
+      tags: destroy
+    - name: Run verification script
+      script:
+        cmd: verification_script.sh {{ ansible_hostname }} {{ vhost_port }} {{ vhost_dir }}
+      ignore_errors: yes
+      register: check_out
+      tags:
         - deploy
         - destroy
         - check
-    - debug:			
-       var:			 check_out.stdout_lines
-      ignore_errors:		 yes
-      tags:			
+    - debug:
+        var: check_out.stdout_lines
+      ignore_errors: yes
+      tags:
         - deploy
         - destroy
         - check
