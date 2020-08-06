@@ -6,18 +6,23 @@ Deploy apache server, and maintain the SElinux for port and directories, with th
 Requirements
 ------------
 
-No specific requirments required
+No specific requirements desired.
 
 Role Variables
 --------------
 
+# Define virtual host port
 vhost_port      : 876
+
+# Define virtual host Root Directory
+vhost_dir	: /vhosts      
+## without trailing slash
 
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+Nothing rquired.
 
 Example Playbook
 ----------------

@@ -2,4 +2,4 @@
 # vars file for web-server
 
 vhost_port      : 876
-
+vhost_dir       : /vhosts
