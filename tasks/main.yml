@@ -1,7 +1,6 @@
 ---
 # tasks file for web-server
 
-
     - name              : Install httpd package
       yum               :
         name            : httpd
@@ -65,20 +64,20 @@
       tags              :
         - deploy
                 
-    - name              : Create Document Root {{ vhost_dir }}
+    - name              : Create virtual Host Document Root {{ vhost_dir }}
       file              :
         path            : "{{ vhost_dir }}/{{ ansible_fqdn }}/"
         state           : directory
       tags              : deploy
                 
-    - name              : Give Document Root SElinux context label
+    - name              : Add SElinux context label to the Document Root {{ vhost_dir }}
       sefcontext        :
         target          : '{{ vhost_dir }}(/.*)?'
         setype          : httpd_sys_content_t
         state           : present
       tags              : deploy
                 
-    - name              : Apply new SELinux file context to filesystem
+    - name              : Apply the new SELinux context to Document Root {{ vhost_dir }}
       command           : restorecon -Rv {{ vhost_dir }}/
       tags              : deploy
                 
@@ -139,14 +138,14 @@
       tags              :
         - destroy
       when              : 
-        - "{{ vhost_port }} != 80"
-        - "{{ vhost_port }} != 81"
-        - "{{ vhost_port }} != 443"
-        - "{{ vhost_port }} != 488"
-        - "{{ vhost_port }} != 8008"
-        - "{{ vhost_port }} != 8009"
-        - "{{ vhost_port }} != 8443"
-        - "{{ vhost_port }} != 9000"
+        - vhost_port|int != 80
+        - vhost_port|int != 81
+        - vhost_port|int != 443
+        - vhost_port|int != 488
+        - vhost_port|int != 8008
+        - vhost_port|int != 8009
+        - vhost_port|int != 8443
+        - vhost_port|int != 9000
                 
     - name              : Stop apache to listen to {{ vhost_port }}
       lineinfile        : 
@@ -187,16 +186,16 @@
       ignore_errors     : yes
       tags              : destroy
                 
-    - name              : Remove Document Root SElinux context label
+    - name              : Remove Document Root http SE context label
       sefcontext        :
         target          : '{{ vhost_dir }}(/.*)?'
         setype          : httpd_sys_content_t
         state           : absent
       tags              : destroy
                         
-    - name              : Apply new SELinux file context to filesystem
-      command           : restorecon -Rv {{ vhost_dir }}/
-      tags              : destroyy
+#    - name              : Restore default SELinux file context
+#      command           : restorecon -Rv {{ vhost_dir }}/
+#      tags              : destroyyy
                          
     - name              : Remove Document Root
       file              :
