@@ -41,7 +41,7 @@ galaxy_info:
   #   - 99.99
 
   platforms:
-   - name: Redhat
+   - name: RedHat
      versions:
      - 7
      - 8
