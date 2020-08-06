@@ -197,7 +197,7 @@
               'rpm -qa | grep httpd-2 2>&1 ; systemctl is-active httpd 2>&1 ; systemctl is-enabled httpd 2>&1 ; firewall-cmd --list-ports 2>&1 ; semanage port -l | grep ^http_port_t 2>&1 ; grep ^Listen /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf 2>&1 ; curl -s localhost:{{ vhost_port }} 2>&1 ;  cat /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf 2>&1 ; echo ""'
       ignore_errors     : yes
       tags              : 
-        - deploiyy
+        - deployy
         - destroyy
         - checkk
         - never
