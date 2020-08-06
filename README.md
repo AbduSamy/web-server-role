@@ -1,17 +1,18 @@
 Deploy HTTP server
 ==================
 
-A brief description of the role goes here.
+Deploy apache server, and maintain the SElinux for port and directories, with the capability to rollback
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+No specific requirments required
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+vhost_port      : 876
+
 
 Dependencies
 ------------
@@ -33,15 +34,16 @@ Including an example of how to use your role (for instance, with variables passe
       tags              : [deploy,destroy,backup,check]
 ...
 
+Uss this command to run the role:
 ansible-playbook run-roles.yml --tags deploy
 
 
 License
 -------
 
-BSD
+MIT
 
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+AbduSamy@GitHub
