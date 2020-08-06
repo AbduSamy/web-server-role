@@ -45,7 +45,7 @@ Use the following play to run this role
    tasks                :
     - include_role      :
        name             : roles/abdusamy.web_server_role
-      tags              : [deploy,destroy,backup,check]
+      tags              : [deploy, destroy, backup, check]
 
 Save the above play in "run-role.yml" file
 
