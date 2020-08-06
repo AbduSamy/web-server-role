@@ -1,7 +1,8 @@
 galaxy_info:
-  author: Abdul Rahman Mohamed 
+  role_name: web-server-deploy
+  author: Abdul Rahman Mohamed
   description: Deploy http service
-  company: Abdul
+  company: Abdul, Inc.
 
   # If the issue tracker for your role is not on github, uncomment the
   # next line and provide a value
@@ -15,7 +16,7 @@ galaxy_info:
   # - Apache-2.0
   # - CC-BY-4.0
   # license: license (GPL-2.0-or-later, MIT, etc)
-  license: MIT
+  license: license (MIT)
 
   min_ansible_version: 2.5
 
@@ -57,4 +58,3 @@ galaxy_info:
 dependencies: []
   # List your role dependencies here, one per line. Be sure to remove the '[]' above,
   # if you add dependencies to this list.
-  
