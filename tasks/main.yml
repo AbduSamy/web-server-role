@@ -56,7 +56,7 @@
                 
     - name              : Create Document Root
       file              :
-        path            : /vhosts/{{ansible_hostname}}.example.com/
+        path            : /vhosts/{{ ansible_hostname }}.example.com/
         state           : directory
       tags              : deploy
                 
@@ -73,13 +73,13 @@
                 
     - name              : Place Home Page
       file              :
-        path            : /vhosts/{{ansible_hostname}}.example.com/index.html
+        path            : /vhosts/{{ ansible_hostname }}.example.com/index.html
         state           : touch
       tags              : deploy
                 
     - name              : Add home page contents
       lineinfile        :
-        path            : /vhosts/{{ansible_hostname}}.example.com/index.html
+        path            : /vhosts/{{ ansible_hostname }}.example.com/index.html
         state           : present
         line            : Hello, this is my ansible webpage for host {{ ansible_hostname }}
       tags              : deploy
@@ -87,7 +87,7 @@
     - name              : Home Page by template
       template          :
         src             : vhost-index-template.j2
-        dest            : /vhosts/{{ansible_hostname}}.example.com/index.html
+        dest            : /vhosts/{{ ansible_hostname }}.example.com/index.html
       tags              : deploy
                 
     - name              : backup configuration files
@@ -100,7 +100,7 @@
                 
     - name              : backup home pages
       fetch             :
-        src             : /vhosts/{{ansible_hostname}}.example.com/index.html
+        src             : /vhosts/{{ ansible_hostname }}.example.com/index.html
         dest            : /backup/fetched/
         validate_checksum       : yes
       ignore_errors     : yes
@@ -161,7 +161,7 @@
                 
     - name              : Remove Home page contents
       lineinfile        :
-        path            : /vhosts/{{ansible_hostname}}.example.com/index.html
+        path            : /vhosts/{{ ansible_hostname }}.example.com/index.html
         state           : absent
         regexp          : "Hello"
       ignore_errors     : yes
@@ -169,7 +169,7 @@
                 
     - name              : Remove Home Page
       file              :
-        path            : /vhosts/{{ansible_hostname}}.example.com/index.html
+        path            : /vhosts/{{ ansible_hostname }}.example.com/index.html
         state           : absent
       ignore_errors     : yes
       tags              : destroy
@@ -192,20 +192,20 @@
       ignore_errors     : yes
       tags              : destroy
 
-    - name              : Checking
-      shell             :
-              'rpm -qa | grep httpd-2 2>&1 ; systemctl is-active httpd 2>&1 ; systemctl is-enabled httpd 2>&1 ; firewall-cmd --list-ports 2>&1 ; semanage port -l | grep ^http_port_t 2>&1 ; grep ^Listen /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf 2>&1 ; curl -s localhost:{{ vhost_port }} 2>&1 ;  cat /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf 2>&1 ; echo ""'
-      ignore_errors     : yes
-      tags              : 
-        - deployy
-        - destroyy
-        - checkk
-        - never
-      register          : check_out
+      #    - name              : Checking
+      #      shell             :
+      #              'rpm -qa | grep httpd-2 2>&1 ; systemctl is-active httpd 2>&1 ; systemctl is-enabled httpd 2>&1 ; firewall-cmd --list-ports 2>&1 ; semanage port -l | grep ^http_port_t 2>&1 ; grep ^Listen /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf 2>&1 ; curl -s localhost:{{ vhost_port }} 2>&1 ;  cat /etc/httpd/conf.d/{{ ansible_hostname }}-vhost.conf 2>&1 ; echo ""'
+      #      ignore_errors     : yes
+      #      tags              : 
+      #        - deployy
+      #        - destroyy
+      #        - checkk
+      #        - never
+      #      register          : check_out
       
     - name              : Run verification script
       script            :
-        cmd             : verification_script.sh {{ansible_hostname}} {{ vhost_port }}
+        cmd             : verification_script.sh {{ ansible_hostname }} {{ vhost_port }}
       ignore_errors     : yes
       register          : check_out
       tags              :
