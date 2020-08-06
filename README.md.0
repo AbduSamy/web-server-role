@@ -23,17 +23,25 @@ Example Playbook
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
+<<<<<<< HEAD
+=======
 
 ---
+>>>>>>> 8cccce3d0767e3c227cfe37de188fe11e813cf96
  - name                 : Run web roles (Deploy httpd service)
    hosts                : web
    tasks                :
     - include_role      :
+<<<<<<< HEAD
+       name             : roles/web-server
+      tags              : [deploy,destroy,backup,check]
+=======
        name             : roles/abdusamy.web_server_role
       tags              : [deploy,destroy,backup,check]
 ...
 
 ansible-playbook run-roles.yml --tags deploy
+>>>>>>> 8cccce3d0767e3c227cfe37de188fe11e813cf96
 
 
 License
