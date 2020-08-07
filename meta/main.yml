@@ -1,5 +1,5 @@
 galaxy_info:
-  role_name: deploy-web-server
+  role_name: web-server-role
   author: Abdul Rahman Mohamed
   description: Deploy http virtual hosts using customized configuration
   company: Abdul, Inc.
